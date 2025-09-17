@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Publier un objet - TrouvéIci</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>TrouvéIci 🚀</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="publish.html">Publier un objet</a>
+      <a href="profile.html">Profil</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Publier un objet</h2>
+    <form id="publishForm">
+      <label>Type :</label>
+      <select id="objectType">
+        <option>Perdu</option>
+        <option>Trouvé</option>
+        <option>À donner</option>
+      </select>
+
+      <label>Titre :</label>
+      <input type="text" id="objectName" required>
+
+      <label>Description :</label>
+      <textarea id="objectDesc" required></textarea>
+
+      <label>Lieu :</label>
+      <input type="text" id="objectLocation" required>
+
+      <label>Image :</label>
+      <input type="file" id="objectImage" accept="image/*">
+
+      <button type="submit">Publier</button>
+    </form>
+
+    <div id="confirmation" style="display:none;">
+      ✅ Objet publié avec succès !
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 TrouvéIci — Made by DWN</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

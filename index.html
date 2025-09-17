@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>TrouvéIci - Accueil</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Leaflet (Carte OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <header>
+    <h1>TrouvéIci 🚀</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="publish.html">Publier un objet</a>
+      <a href="profile.html">Profil</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Objets autour de vous</h2>
+    <div id="map"></div>
+
+    <h2>Objets récents</h2>
+    <div id="recentObjects"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 TrouvéIci — Made by DWN</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<header>
+  <img src="logo.png" alt="Logo" class="logo">
+  <h1>TrouvéIci 🚀</h1>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="publish.html">Publier un objet</a>
+    <a href="profile.html">Profil</a>
+    <a href="#" onclick="toggleChat()">Chat 💬</a>
+  </nav>
+</header>
+
+<!-- Chat popup -->
+<div id="chatPopup" style="display:none;">
+  <div id="chatMessages"></div>
+  <input type="text" id="chatInput" placeholder="Écrire un message...">
+  <button onclick="sendChatMessage()">Envoyer</button>
+</div>

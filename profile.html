@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>TrouveIci - Profil</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <style>.mini { font-size:0.9rem; color:rgba(255,255,255,0.8); margin-bottom:8px; }</style>
+</head>
+<body>
+  <header>
+    <h1>TrouvéIci 🚀</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="publish.html">Publier un objet</a>
+      <a href="profile.html">Profil</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Mon profil</h2>
+    <div class="mini">Tu es reconnu par un ID local (stocké dans ton navigateur).</div>
+    <p><strong>ID utilisateur :</strong> <span id="uid"></span></p>
+
+    <h3>Mes annonces</h3>
+    <div id="myAnnouncements"></div>
+
+    <h3>Mes abonnements (alertes)</h3>
+    <div id="mySubs"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 TrouvéIci</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

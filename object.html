@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>TrouveIci - Objet</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>#map-object { height: 240px; border-radius:12px; margin-bottom:12px; }</style>
+</head>
+<body>
+  <header>
+    <h1>TrouvéIci 🚀</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="publish.html">Publier un objet</a>
+      <a href="profile.html">Profil</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="titleObj">Objet</h2>
+    <div id="meta"></div>
+    <div id="map-object"></div>
+
+    <h3>Messages</h3>
+    <div id="messages"></div>
+
+    <h4>Envoyer un message</h4>
+    <input id="msgText" placeholder="Ton message...">
+    <button id="sendMsg">Envoyer</button>
+
+    <div style="margin-top:12px;">
+      <button id="claimBtn">Marquer comme récupéré</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 TrouvéIci</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
