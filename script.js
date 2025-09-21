@@ -1,147 +1,103 @@
-/******************************
- * Stockage local
- ******************************/
-function getMessages() {
-    return JSON.parse(localStorage.getItem("messages")) || [];
-}
-function saveMessages(messages) {
-    localStorage.setItem("messages", JSON.stringify(messages));
-}
+// --- Publication d’objets ---
+const objetForm = document.getElementById("objetForm");
+const objetNom = document.getElementById("objetNom");
+const objetDesc = document.getElementById("objetDesc");
+const listeObjets = document.getElementById("listeObjets");
 
-/******************************
- * Affichage Chat
- ******************************/
-function displayChat() {
-    const container = document.getElementById("chatMessages");
-    if (!container) return;
+// Charger les objets sauvegardés
+let objets = JSON.parse(localStorage.getItem("objets")) || [];
+renderObjets();
 
-    container.innerHTML = "";
-    getMessages().forEach(m => {
-        const div = document.createElement("div");
-        div.classList.add("message-card", "fadeIn");
-        div.innerHTML = `
-            <strong>${m.user}</strong>: ${m.text} <br>
-            <small>${new Date(m.date).toLocaleTimeString()}</small>`;
-        container.appendChild(div);
-    });
+// Initialiser la carte
+const map = L.map("map").setView([48.8566, 2.3522], 13); // Paris par défaut
 
-    // Scroll en bas
-    container.scrollTop = container.scrollHeight;
-}
+// Charger tiles OpenStreetMap
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap contributors"
+}).addTo(map);
 
-function sendChatMessage() {
-    const input = document.getElementById("chatInput");
-    if (!input || input.value.trim() === "") return;
+// Stockage des marqueurs
+let markers = [];
 
-    const messages = getMessages();
-    messages.push({
-        user: "Moi",
-        text: input.value,
-        date: new Date()
-    });
-    saveMessages(messages);
-
-    // Afficher + notifier
-    displayChat();
-    sendNotification("Nouveau message", input.value);
-
-    input.value = "";
+// Récupérer localisation de l’utilisateur
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    map.setView([lat, lon], 14);
+    L.marker([lat, lon]).addTo(map).bindPopup("Vous êtes ici !");
+  }, () => {
+    alert("Impossible d’obtenir votre localisation.");
+  });
+} else {
+  alert("La géolocalisation n’est pas supportée par ce navigateur.");
 }
 
-/******************************
- * Notifications natives
- ******************************/
-function sendNotification(title, body) {
-    if (!("Notification" in window)) return;
-
-    if (Notification.permission === "granted") {
-        new Notification(title, { body });
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                new Notification(title, { body });
-            }
-        });
-    }
-}
-
-/******************************
- * Carte Leaflet + Géolocalisation
- ******************************/
-function initMap() {
-    const mapDiv = document.getElementById("map");
-    if (!mapDiv) return;
-
-    // Créer la carte centrée sur Paris par défaut
-    const map = L.map("map").setView([48.8566, 2.3522], 12);
-
-    // Ajouter la couche OpenStreetMap
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap contributors"
-    }).addTo(map);
-
-    // Fonction pour ajouter un marker animé
-    function addMarker(lat, lon, title) {
-        const marker = L.marker([lat, lon]).addTo(map)
-            .bindPopup(title);
-        // Ajouter animation
-        if (marker._icon) marker._icon.classList.add("markerAnim");
-    }
-
-    // Géolocalisation de l'utilisateur
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            pos => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                map.setView([lat, lon], 14);
-                addMarker(lat, lon, "📍 Vous êtes ici");
-            },
-            err => {
-                console.warn("Erreur géolocalisation :", err.message);
-                alert("Impossible d’obtenir votre position. Vérifiez que vous êtes en HTTPS ou localhost.");
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-    } else {
-        alert("Votre navigateur ne supporte pas la géolocalisation !");
-    }
-}
-
-/******************************
- * Animations CSS
- ******************************/
-const style = document.createElement("style");
-style.innerHTML = `
-.fadeIn {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInAnim 0.5s forwards;
-}
-@keyframes fadeInAnim {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.markerAnim {
-  animation: bounceMarker 0.6s ease;
-}
-@keyframes bounceMarker {
-  0% { transform: translateY(-20px); }
-  50% { transform: translateY(0); }
-  100% { transform: translateY(-10px); }
-}
-`;
-document.head.appendChild(style);
-
-/******************************
- * Initialisation au chargement
- ******************************/
-document.addEventListener("DOMContentLoaded", () => {
-    initMap();
-    displayChat();
-    if ("Notification" in window) Notification.requestPermission();
+// Gestion du formulaire
+objetForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const newObjet = {
+    nom: objetNom.value,
+    desc: objetDesc.value,
+    lat: map.getCenter().lat,
+    lon: map.getCenter().lng
+  };
+  objets.push(newObjet);
+  localStorage.setItem("objets", JSON.stringify(objets));
+  renderObjets();
+  renderMarkers();
+  objetForm.reset();
 });
+
+function renderObjets() {
+  listeObjets.innerHTML = "";
+  objets.forEach((o) => {
+    const li = document.createElement("li");
+    li.textContent = `${o.nom} : ${o.desc}`;
+    listeObjets.appendChild(li);
+  });
+}
+
+function renderMarkers() {
+  // Supprimer anciens marqueurs
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  // Ajouter nouveaux
+  objets.forEach(o => {
+    const marker = L.marker([o.lat, o.lon]).addTo(map)
+      .bindPopup(`<b>${o.nom}</b><br>${o.desc}`);
+    markers.push(marker);
+  });
+}
+
+// Charger marqueurs au démarrage
+renderMarkers();
+
+// --- Chat ---
+const chatBox = document.getElementById("chatBox");
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+
+let messages = JSON.parse(localStorage.getItem("messages")) || [];
+renderChat();
+
+sendBtn.addEventListener("click", () => {
+  if (chatInput.value.trim() === "") return;
+  const msg = chatInput.value;
+  messages.push(msg);
+  localStorage.setItem("messages", JSON.stringify(messages));
+  renderChat();
+  chatInput.value = "";
+});
+
+function renderChat() {
+  chatBox.innerHTML = "";
+  messages.forEach(m => {
+    const div = document.createElement("div");
+    div.classList.add("message");
+    div.textContent = m;
+    chatBox.appendChild(div);
+  });
+  chatBox.scrollTop = chatBox.scrollHeight; // auto-scroll
+}
